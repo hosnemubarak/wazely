@@ -1,0 +1,73 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.python-version
+develop-eggs/
+eggs/
+lib/
+pip-log.txt
+pip-delete-this-directory.txt
+htmlcov/
+.tox/
+pypy/
+.coverage
+.coverage.*
+cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+.eggs/
+*.egg
+*.manifest
+*.spec
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+live_settings.py
+media/
+local_settings/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Editors / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Kilo (local state only, not the agent/skill files themselves)
+.kilo/worktrees/
+.kilo/agent-manager.json
+.kilo/kilo.local.json

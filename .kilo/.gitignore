@@ -1,0 +1,14 @@
+# Agent Manager local state - machine specific, never shared
+worktrees/
+agent-manager.json
+
+# Personal overrides
+kilo.local.json
+
+# Node artifacts, if tooling is ever added here
+node_modules/
+package.json
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lock
