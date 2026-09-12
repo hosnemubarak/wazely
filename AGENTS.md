@@ -51,7 +51,7 @@ frontend assets.
 Shared, version-controlled and committed with the project. See `.kilo/README.md` for the
 full list and usage examples.
 
-- `.kilo/agent/*.md` — roles you can pick per task: `django`, `htmx`, `ui`, `data`,
+- `.kilo/agent/*.md` — roles you can pick per task: `django-htmx`, `ui`, `data`,
   plus subagents `code-reviewer` and `github-workflow` that other agents invoke.
 - `.kilo/skill/<name>/SKILL.md` — knowledge shared across roles, like
   `django-models`, `htmx-patterns`, `celery-patterns`, `code-quality`.

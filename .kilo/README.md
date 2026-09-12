@@ -30,23 +30,13 @@ I need to write a Django migration. Use the django agent.
 "Write the user profile model. django agent."
 ```
 
-Or switch in the session menu: `/agents`, then pick `django`, `htmx`, or `ui`.
-
-**Let skills load themselves.** Each skill has a `description` that acts as a trigger.
-When your request matches, the agent loads that skill automatically. For example, asking
-to "check code quality" loads the `code-quality` skill on its own.
-
-**Force a skill when needed.** If the trigger words did not catch it, say so directly:
-
-```
-Review the last commit. Use the pr-review skill.
-```
+Or switch in the session menu: `/agents`, then pick `django-htmx` or `ui`.
 
 **Use subagents for scoped work.** The `code-reviewer` and `github-workflow` agents are
 subagents invoked from another agent. Tell the primary agent to use them:
 
 ```
-django agent: implement the message model, then ask code-reviewer to review the diff.
+django-htmx agent: implement the message model, then ask code-reviewer to review the diff.
 ```
 
 ## Current files
@@ -55,8 +45,7 @@ django agent: implement the message model, then ask code-reviewer to review the 
 
 | File | Role |
 |---|---|
-| `django.md` | Django backend: models, migrations, views, services |
-| `htmx.md` | HTMX and template work: partials, swaps, forms |
+| `django-htmx.md` | Full stack Django + HTMX: models, views, templates, forms, HTMX partials |
 | `ui.md` | Design decisions: layout, color, components, accessibility |
 | `data.md` | Notebook-first data analysis (existing) |
 | `code-reviewer.md` | Subagent that reviews code for standards and bugs |
@@ -118,7 +107,7 @@ A flat file like `.kilo/skill/my-skill.md` is ignored.
 
 - Project Django apps live under `apps/` (e.g. `apps/agents/` for AI customer agents).
 - Kilo helper files live under `.kilo/`.
-- To avoid confusion: the `django.md` helper is a backend-coding role; the `apps/agents`
+- To avoid confusion: the `django-htmx.md` helper is a coding role; the `apps/agents`
   folder is application data. They are unrelated.
 
 ## Git
