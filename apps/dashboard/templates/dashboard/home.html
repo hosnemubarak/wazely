@@ -1,0 +1,29 @@
+{% extends "shell.html" %}
+{% block title %}Overview · Wazely{% endblock %}
+{% block page_title %}Overview{% endblock %}
+{% block content %}
+<p class="mb-8 max-w-2xl text-sm text-slate-500 dark:text-slate-400">Signed in as {{ request.user.email }}. The full dashboard is on its way — here is what is coming.</p>
+<section aria-label="Platform areas" class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+    <article class="card p-6">
+        <div class="flex items-start justify-between gap-4">
+            <h2 class="text-sm font-semibold text-slate-900 dark:text-slate-100">Conversations</h2>
+            <span class="badge badge-muted">Coming soon</span>
+        </div>
+        <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">Manage WhatsApp conversations with your customers, assisted by AI agents.</p>
+    </article>
+    <article class="card p-6">
+        <div class="flex items-start justify-between gap-4">
+            <h2 class="text-sm font-semibold text-slate-900 dark:text-slate-100">Contacts</h2>
+            <span class="badge badge-muted">Coming soon</span>
+        </div>
+        <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">A shared directory of everyone you talk to on WhatsApp.</p>
+    </article>
+    <article class="card p-6">
+        <div class="flex items-start justify-between gap-4">
+            <h2 class="text-sm font-semibold text-slate-900 dark:text-slate-100">Knowledge base</h2>
+            <span class="badge badge-muted">Coming soon</span>
+        </div>
+        <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">Build the knowledge your AI agents draw on when replying.</p>
+    </article>
+</section>
+{% endblock %}

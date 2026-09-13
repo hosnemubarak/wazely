@@ -71,3 +71,6 @@ desktop.ini
 .kilo/worktrees/
 .kilo/agent-manager.json
 .kilo/kilo.local.json
+
+# Tailwind standalone binary (download per machine; built CSS is committed)
+bin/

@@ -1,0 +1,10 @@
+<div class="flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-300 px-6 py-16 text-center dark:border-white/15">
+    <span class="flex size-12 items-center justify-center rounded-full bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500" aria-hidden="true">
+        {% include "components/_icon.html" with name=icon size="24" %}
+    </span>
+    <h2 class="mt-4 text-lg font-semibold text-slate-900 dark:text-slate-100">{{ title }}</h2>
+    {% if description %}<p class="mt-1.5 max-w-sm text-sm text-slate-500 dark:text-slate-400">{{ description }}</p>{% endif %}
+    {% if action_url %}
+    <a href="{{ action_url }}" class="btn btn-secondary mt-6">{{ action_text }}</a>
+    {% endif %}
+</div>

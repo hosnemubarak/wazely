@@ -1,0 +1,247 @@
+@import "tailwindcss";
+
+@source "../../templates";
+@source "../../apps";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme {
+  --color-brand-50:  #ecfdf5;
+  --color-brand-100: #d1fae5;
+  --color-brand-200: #a7f3d0;
+  --color-brand-300: #6ee7b7;
+  --color-brand-400: #34d399;
+  --color-brand-500: #10b981;
+  --color-brand-600: #059669;
+  --color-brand-700: #047857;
+  --color-brand-800: #065f46;
+  --color-brand-900: #064e3b;
+  --color-brand-950: #022c22;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+
+/*
+ * Wazely design system — light-first. Default styles are light; `dark:` utilities
+ * apply when <html data-theme="dark">. See .kilo/skill/wazely-ui/SKILL.md.
+ */
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  html[data-theme="dark"] {
+    color-scheme: dark;
+  }
+  [x-cloak] {
+    display: none !important;
+  }
+}
+
+@layer components {
+  /* Buttons */
+  .btn {
+    @apply inline-flex h-9 items-center justify-center gap-2 rounded-md px-4 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply bg-brand-600 text-white shadow-xs hover:bg-brand-700;
+  }
+  .btn-secondary {
+    @apply border border-slate-300 bg-white text-slate-700 shadow-xs hover:bg-slate-50 dark:border-white/10 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800;
+  }
+  .btn-ghost {
+    @apply text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100;
+  }
+  .btn-danger {
+    @apply bg-red-600 text-white shadow-xs hover:bg-red-700;
+  }
+
+  /* Inputs — .input for hand-written controls; the .form-field rules style
+     Django-rendered widgets ({{ field }}), which cannot carry classes. */
+  .input,
+  .form-field :where(input:not([type="checkbox"], [type="radio"], [type="hidden"], [type="submit"], [type="button"]), select, textarea) {
+    @apply h-9 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-xs transition-colors placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500;
+  }
+  .form-field textarea {
+    @apply h-auto min-h-20;
+  }
+  .form-field input[type="password"] {
+    @apply pr-10;
+  }
+  .form-field input[aria-invalid="true"],
+  .form-field select[aria-invalid="true"],
+  .form-field textarea[aria-invalid="true"] {
+    @apply border-red-300 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500/50;
+  }
+
+  /* Cards */
+  .card {
+    @apply rounded-lg border border-slate-200 bg-white shadow-xs dark:border-white/10 dark:bg-slate-900;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset;
+  }
+  .badge-success {
+    @apply bg-brand-50 text-brand-700 ring-brand-600/20 dark:bg-brand-500/10 dark:text-brand-300 dark:ring-brand-500/30;
+  }
+  .badge-warning {
+    @apply bg-amber-50 text-amber-700 ring-amber-600/20 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-500/30;
+  }
+  .badge-error {
+    @apply bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-500/10 dark:text-red-300 dark:ring-red-500/30;
+  }
+  .badge-info {
+    @apply bg-sky-50 text-sky-700 ring-sky-600/20 dark:bg-sky-500/10 dark:text-sky-300 dark:ring-sky-500/30;
+  }
+  .badge-muted {
+    @apply bg-slate-100 text-slate-600 ring-slate-500/20 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-400/20;
+  }
+
+  /* Navigation */
+  .nav-item {
+    @apply flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100;
+  }
+  .nav-item[aria-current="page"] {
+    @apply bg-brand-50 text-brand-700 hover:bg-brand-50 dark:bg-brand-500/10 dark:text-brand-300 dark:hover:bg-brand-500/10;
+  }
+
+  /* App shell — sidebar width state lives on <html data-sidebar="collapsed">
+     (set pre-paint in base.html) so there is no flash on load. */
+  .sidebar {
+    @apply fixed inset-y-0 left-0 z-50 flex w-64 -translate-x-full flex-col border-r border-slate-200 bg-white transition-[width,transform] duration-200 dark:border-white/10 dark:bg-slate-900;
+  }
+  .main-shell {
+    @apply flex min-h-screen flex-1 flex-col transition-[padding] duration-200;
+  }
+  .sidebar-label {
+    @apply truncate;
+  }
+  .sidebar-section-title {
+    @apply mb-1 px-3 text-xs font-medium text-slate-500 dark:text-slate-400;
+  }
+  .sidebar-tip {
+    @apply pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-md bg-slate-900 px-2 py-1 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity duration-150 dark:bg-slate-700;
+  }
+  @media (min-width: 64rem) {
+    .sidebar {
+      @apply translate-x-0;
+    }
+    [data-sidebar="collapsed"] .sidebar {
+      @apply w-16;
+    }
+    .main-shell {
+      @apply pl-64;
+    }
+    [data-sidebar="collapsed"] .main-shell {
+      @apply pl-16;
+    }
+  }
+  [data-sidebar="collapsed"] .sidebar-label,
+  [data-sidebar="collapsed"] .sidebar-section-title {
+    @apply hidden;
+  }
+  [data-sidebar="collapsed"] .sidebar-center,
+  [data-sidebar="collapsed"] .sidebar-brand {
+    @apply justify-center px-0;
+  }
+  [data-sidebar="collapsed"] .sidebar-item:hover .sidebar-tip,
+  [data-sidebar="collapsed"] .sidebar-item:focus-within .sidebar-tip {
+    @apply opacity-100;
+  }
+
+  /* Toasts (Django messages) — bottom-right stack. */
+  #toast-container {
+    @apply pointer-events-none fixed bottom-6 right-6 z-50 flex w-[calc(100%-3rem)] max-w-sm flex-col gap-3;
+  }
+  .toast {
+    @apply pointer-events-auto flex items-start gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-lg dark:border-white/10 dark:bg-slate-900;
+  }
+  .toast-close {
+    @apply -mr-1 shrink-0 rounded-md p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:hover:bg-slate-800 dark:hover:text-slate-300;
+  }
+  .toast-icon-success {
+    @apply text-brand-600 dark:text-brand-400;
+  }
+  .toast-icon-error {
+    @apply text-red-600 dark:text-red-400;
+  }
+  .toast-icon-warning {
+    @apply text-amber-500;
+  }
+  .toast-icon-info,
+  .toast-icon-debug {
+    @apply text-sky-600 dark:text-sky-400;
+  }
+
+  /* Small helpers */
+  .spinner {
+    @apply inline-block animate-spin;
+  }
+  .tooltip {
+    @apply pointer-events-none absolute z-50 whitespace-nowrap rounded-md bg-slate-900 px-2 py-1 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100 dark:bg-slate-700;
+  }
+  .modal {
+    @apply m-auto w-full max-w-lg rounded-lg border border-slate-200 bg-white p-6 shadow-lg dark:border-white/10 dark:bg-slate-900;
+  }
+  .modal::backdrop {
+    background-color: rgb(2 6 23 / 0.5);
+  }
+}
+
+/* Toast lifecycle: slide+fade in, auto-dismiss after ~5s (paused on hover),
+   fade out on dismissal. Animations are skipped under prefers-reduced-motion;
+   app.js then auto-dismisses with a plain timer. */
+@keyframes wazely-toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes wazely-toast-timer {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes wazely-toast-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(1rem);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .toast {
+    animation: wazely-toast-in 0.2s ease-out both, wazely-toast-timer 5s linear 0.2s forwards;
+  }
+  .toast:not(.toast-out):hover,
+  .toast:not(.toast-out):focus-within {
+    animation-play-state: paused;
+  }
+  .toast-out {
+    animation: wazely-toast-out 0.2s ease-in forwards !important;
+  }
+}
+
+/* HTMX request indicators */
+.htmx-indicator {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.htmx-request.htmx-indicator {
+  opacity: 1;
+}
+.htmx-request .htmx-indicator {
+  opacity: 1;
+}

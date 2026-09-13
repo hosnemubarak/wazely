@@ -1,0 +1,10 @@
+{% extends "account/base.html" %}
+{% block title %}Log out · Wazely{% endblock %}
+{% block content %}
+<h1 class="text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">Log out</h1>
+<p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Are you sure you want to log out?</p>
+<form method="post" action="{% url 'account_logout' %}" class="mt-8">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary w-full">Log out</button>
+</form>
+{% endblock %}

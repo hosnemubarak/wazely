@@ -1,0 +1,17 @@
+<div class="toast" role="{% if variant == 'error' %}alert{% else %}status{% endif %}">
+    <span class="shrink-0 toast-icon-{{ variant|default:'info' }}" aria-hidden="true">
+        {% if variant == "success" %}
+            {% include "components/_icon.html" with name="check-circle" %}
+        {% elif variant == "error" %}
+            {% include "components/_icon.html" with name="x-circle" %}
+        {% elif variant == "warning" %}
+            {% include "components/_icon.html" with name="alert-triangle" %}
+        {% else %}
+            {% include "components/_icon.html" with name="info" %}
+        {% endif %}
+    </span>
+    <p class="flex-1 text-sm text-slate-700 dark:text-slate-200">{% firstof text 'Notification' %}</p>
+    <button type="button" class="toast-close" data-toast-close aria-label="Dismiss notification">
+        {% include "components/_icon.html" with name="x" size="14" %}
+    </button>
+</div>

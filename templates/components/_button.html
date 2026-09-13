@@ -1,0 +1,1 @@
+<button type="{% firstof type 'button' %}" class="btn btn-{{ variant|default:'primary' }} {% firstof extra_class '' %}"{% if id %} id="{{ id }}"{% endif %}{% if name %} name="{{ name }}"{% endif %}{% if value %} value="{{ value }}"{% endif %}{% if disabled %} disabled{% endif %}>{% firstof text 'Button' %}</button>

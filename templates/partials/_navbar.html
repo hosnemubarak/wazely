@@ -1,0 +1,56 @@
+<header class="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-2 border-b border-slate-200 bg-white/90 px-4 backdrop-blur dark:border-white/10 dark:bg-slate-900/90 lg:px-8">
+    <button type="button" class="inline-flex size-9 items-center justify-center rounded-md text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 lg:hidden" @click="$store.ui.drawerOpen = true" aria-label="Open navigation">
+        {% include "components/_icon.html" with name="menu" %}
+    </button>
+    <button type="button" data-sidebar-toggle class="hidden size-9 items-center justify-center rounded-md text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 lg:inline-flex" aria-label="Toggle sidebar">
+        {% include "components/_icon.html" with name="panel-left" %}
+    </button>
+    <div class="group relative ml-2 hidden w-full max-w-xs sm:block">
+        <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" aria-hidden="true">
+            {% include "components/_icon.html" with name="search" %}
+        </span>
+        <input type="search" disabled placeholder="Search" aria-label="Search (coming soon)" class="input cursor-not-allowed pl-9">
+        <span class="tooltip left-1/2 top-full mt-2 -translate-x-1/2">Coming soon</span>
+    </div>
+    <div class="ml-auto flex items-center gap-1.5">
+        <div class="relative" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
+            <button type="button" class="inline-flex size-9 items-center justify-center rounded-md text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200" @click="open = !open" :aria-expanded="open ? 'true' : 'false'" aria-haspopup="true" aria-label="Notifications">
+                {% include "components/_icon.html" with name="bell" %}
+            </button>
+            <div x-cloak x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="absolute right-0 mt-2 w-80 origin-top-right rounded-lg border border-slate-200 bg-white p-4 shadow-lg dark:border-white/10 dark:bg-slate-900">
+                <p class="text-sm font-semibold text-slate-900 dark:text-slate-100">Notifications</p>
+                <div class="mt-4 flex flex-col items-center gap-1.5 py-6 text-center">
+                    <span class="text-slate-300 dark:text-slate-600" aria-hidden="true">{% include "components/_icon.html" with name="bell" size="24" %}</span>
+                    <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">You're all caught up.</p>
+                    <p class="text-xs text-slate-400 dark:text-slate-500">Notifications will appear here.</p>
+                </div>
+            </div>
+        </div>
+        {% include "partials/_theme_toggle.html" %}
+        <div class="relative" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
+            <button type="button" class="flex items-center gap-1.5 rounded-md p-1.5 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200" @click="open = !open" :aria-expanded="open ? 'true' : 'false'" aria-haspopup="true" aria-label="Open user menu">
+                <span class="flex size-7 items-center justify-center rounded-full bg-brand-600 text-xs font-semibold text-white" aria-hidden="true">{{ request.user.email|slice:":1"|upper }}</span>
+                {% include "components/_icon.html" with name="chevron-down" size="14" %}
+            </button>
+            <div x-cloak x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="absolute right-0 mt-2 w-64 origin-top-right rounded-lg border border-slate-200 bg-white shadow-lg dark:border-white/10 dark:bg-slate-900">
+                <div class="border-b border-slate-200 px-4 py-3 dark:border-white/10">
+                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Signed in as</p>
+                    <p class="truncate text-sm font-medium text-slate-900 dark:text-slate-100">{{ request.user.email }}</p>
+                </div>
+                <div class="p-1.5">
+                    <a href="{% url 'organizations:settings' %}" class="flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100">
+                        {% include "components/_icon.html" with name="settings" %}
+                        Settings
+                    </a>
+                    <form method="post" action="{% url 'account_logout' %}" hx-post="{% url 'account_logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-left text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100">
+                            {% include "components/_icon.html" with name="log-out" %}
+                            Log out
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

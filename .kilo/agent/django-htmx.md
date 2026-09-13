@@ -31,8 +31,10 @@ and the thin glue between them.
   `python manage.py makemigrations --check --dry-run` clean.
 - Add a dependency to `requirements.txt` only when the requested feature needs it,
   and say so explicitly.
-- HTMX itself is not yet a dependency. If a task requires it, say so and wait for
-  confirmation before adding it to `requirements.txt` or the base template.
+- HTMX is vendored at `static/js/htmx.min.js` and Alpine.js at
+  `static/js/alpine.min.js`; both load in `base.html`. Do not add other
+  client-side frameworks or npm dependencies — the frontend is built with the
+  Tailwind standalone binary (see the `wazely-ui` skill).
 
 ## Related skills
 
@@ -41,6 +43,9 @@ and the thin glue between them.
 - **`django-templates`** — inheritance, tags, filters.
 - **`htmx-patterns`** — partial template responses, hx- attributes, swaps,
   HTMX-driven form submission.
+- **`wazely-ui`** — the project design system (Tailwind v4): tokens, type
+  scale, spacing, component contracts, theming. Load it for any task that
+  builds or styles templates or partials.
 - **`django-extensions`** — `show_urls`, `show_template_tags` when exploring structure.
 - **`code-quality`** — run checks (`ruff`, `pyright`) on changed files.
 

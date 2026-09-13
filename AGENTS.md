@@ -8,10 +8,14 @@ knowledge base.
 
 ## Current Stage
 
-Foundation only. The repository holds a clean Django + PostgreSQL project with empty apps.
+Foundation plus authentication and the UI shell. The repository holds a Django +
+PostgreSQL project with django-allauth (email login, password reset, email
+verification), the Tailwind design system, the app shell (sidebar/navbar), and
+placeholder routes per app (overview, conversations, contacts, WhatsApp accounts,
+agents, knowledge base, team, settings) backed by empty states.
 
-There are no models, views, URLs (beyond `admin/`), templates, forms, serializers, services,
-repositories, or integrations. Nothing about WhatsApp, OpenAI, RAG, or agents is implemented.
+There are no models beyond the custom user, no forms/serializers/services, and no
+WhatsApp, OpenAI, RAG, or agent integrations yet.
 
 ## Current Technology Stack
 
@@ -19,9 +23,29 @@ repositories, or integrations. Nothing about WhatsApp, OpenAI, RAG, or agents is
 - Django (`config` project package)
 - PostgreSQL through `psycopg`
 - `python-dotenv` for environment configuration
+- Tailwind CSS v4 (standalone binary; see "Frontend build" below)
+- HTMX 2.0.6 and Alpine.js 3.15.0, vendored under `static/js/` (no npm)
 
-Not part of the project yet: HTMX, JavaScript, CSS, REST framework, Celery, Redis, Docker,
-and any AI or messaging SDK.
+Not part of the project yet: REST framework, Celery, Redis, Docker, and any AI
+or messaging SDK.
+
+## Frontend build
+
+Tailwind CSS is built with the standalone binary (no Node, no package.json):
+
+1. Download once per machine into `bin/` (git-ignored):
+   `https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-windows-x64.exe`
+2. Build commands (from the repo root):
+
+```powershell
+.\bin\tailwindcss.exe -i static/css/app.src.css -o static/css/app.css --watch   # dev
+.\bin\tailwindcss.exe -i static/css/app.src.css -o static/css/app.css --minify  # before commit
+```
+
+The built `static/css/app.css` is committed — rebuild it whenever template
+classes change, and commit the rebuilt file. There is no CI/deploy build step;
+`collectstatic` picks up the committed file. See `.kilo/skill/wazely-ui/SKILL.md`
+for the design system itself.
 
 ## App Layout
 

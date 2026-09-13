@@ -1,3 +1,4 @@
 Django
 psycopg[binary]
 python-dotenv
+django-allauth>=65.4

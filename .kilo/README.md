@@ -58,6 +58,7 @@ django-htmx agent: implement the message model, then ask code-reviewer to review
 | `django-models` | Fat models, thin views, QuerySet optimization |
 | `django-forms` | ModelForm, validation, clean methods, HTMX forms |
 | `django-templates` | Inheritance, partials, tags, filters |
+| `wazely-ui` | Wazely UI design system (Tailwind v4): tokens, typography, spacing, components, theming; use for all UI work |
 | `django-extensions` | Introspecting URLs, models, settings; shell_plus |
 | `htmx-patterns` | Partial views, hx- attributes, dynamic UI without JS |
 | `celery-patterns` | Background tasks, retries, idempotency, beat schedules |

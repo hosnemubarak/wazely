@@ -1,0 +1,5 @@
+<div id="toast-container" aria-live="polite">
+    {% for message in messages %}
+        {% include "components/_toast.html" with variant=message.tags|default:'info' text=message %}
+    {% endfor %}
+</div>

@@ -1,0 +1,11 @@
+<div x-data>
+    <button type="button" class="btn btn-primary" @click="$refs.wzmodal.showModal()">{% firstof open_text 'Open modal' %}</button>
+    <dialog x-ref="wzmodal" class="modal" @click="if ($event.target === $el) $el.close()" aria-labelledby="wzmodal-title">
+        <h3 id="wzmodal-title" class="text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">{% firstof title 'Modal title' %}</h3>
+        {% if body %}<p class="mt-2 text-sm text-slate-500 dark:text-slate-400">{{ body }}</p>{% endif %}
+        <div class="mt-6 flex justify-end gap-3">
+            <button type="button" class="btn btn-secondary" @click="$refs.wzmodal.close()">Cancel</button>
+            <button type="button" class="btn btn-primary" @click="$refs.wzmodal.close()">{% firstof action_text 'Confirm' %}</button>
+        </div>
+    </dialog>
+</div>

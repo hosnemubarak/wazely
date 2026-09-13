@@ -1,0 +1,6 @@
+<div class="form-field">
+    <label for="{{ id }}" class="mb-1.5 block text-xs font-medium text-slate-700 dark:text-slate-300">{{ label }}</label>
+    <input id="{{ id }}" name="{{ name }}" type="{% firstof type 'text' %}" class="input"{% if placeholder %} placeholder="{{ placeholder }}"{% endif %}{% if value %} value="{{ value }}"{% endif %}{% if error %} aria-invalid="true"{% endif %}{% if help %} aria-describedby="{{ id }}-help"{% endif %}{% if error %} aria-describedby="{{ id }}-error"{% endif %}>
+    {% if help %}<p class="mt-1.5 text-xs text-slate-500 dark:text-slate-400" id="{{ id }}-help">{{ help }}</p>{% endif %}
+    {% if error %}<p class="mt-1.5 text-xs font-medium text-red-600 dark:text-red-400" id="{{ id }}-error">{{ error }}</p>{% endif %}
+</div>

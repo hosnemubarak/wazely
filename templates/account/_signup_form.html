@@ -1,0 +1,13 @@
+<div id="auth-form">
+    <form method="post" action="{% url 'account_signup' %}"
+          hx-post="{% url 'account_signup' %}"
+          hx-target="#auth-form" hx-swap="outerHTML"
+          hx-indicator="#auth-submit-indicator"
+          hx-disabled-elt="find button[type='submit']">
+        {% csrf_token %}
+        {% include "partials/_form_fields.html" %}
+        <button type="submit" class="btn btn-primary mt-2 w-full">
+            Sign up<span id="auth-submit-indicator" class="htmx-indicator ml-1 inline-flex" aria-hidden="true">{% include "components/_spinner.html" %}</span>
+        </button>
+    </form>
+</div>
