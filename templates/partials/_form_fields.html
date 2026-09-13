@@ -1,38 +1,37 @@
 {% if form.non_field_errors %}
-    <div class="form-errors mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300" role="alert">
+    <div class="form-errors mb-5 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300" role="alert">
         {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
     </div>
 {% endif %}
-{% for field in form %}
-    <div class="form-field mb-4">
-        {% if field.field.widget.input_type == "checkbox" %}
-            <div class="flex items-center gap-2">
-                {{ field }}
-                <label for="{{ field.id_for_label }}" class="text-sm text-slate-700 dark:text-slate-300">{{ field.label }}</label>
-            </div>
-        {% else %}
-            <label for="{{ field.id_for_label }}" class="mb-1.5 block text-xs font-medium text-slate-700 dark:text-slate-300">{{ field.label }}</label>
-            {% if field.field.widget.input_type == "password" %}
-                <div class="relative input-with-toggle" x-data="wzPassword">
+{% if form %}
+    <div class="space-y-5">
+        {% for field in form %}
+            <div class="form-field">
+                {% if field.field.widget.input_type == "checkbox" %}
+                    <div class="flex items-center gap-2">
+                        {{ field }}
+                        <label for="{{ field.id_for_label }}" class="text-sm text-slate-700 dark:text-slate-300">{{ field.label }}</label>
+                    </div>
+                {% else %}
+                    <div class="mb-1.5 flex items-center justify-between">
+                        <label for="{{ field.id_for_label }}" class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ field.label }}</label>
+                        {# Set by apps.accounts.forms.LoginForm — the single "Forgot password?" affordance. #}
+                        {% if field.field.show_forgot_password_link %}
+                            <a href="{% url 'account_reset_password' %}" class="auth-link text-xs" hx-get="{% url 'account_reset_password' %}" hx-target="#auth-content" hx-swap="innerHTML show:window:top" hx-push-url="true">Forgot password?</a>
+                        {% endif %}
+                    </div>
                     {{ field }}
-                    <button type="button" class="absolute inset-y-0 right-0 flex w-9 items-center justify-center rounded-r-md text-slate-400 transition-colors hover:text-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-slate-500 dark:hover:text-slate-300" @click="toggle()" aria-label="Show password" aria-controls="{{ field.id_for_label }}" :aria-label="visible ? 'Hide password' : 'Show password'">
-                        <span x-show="!visible">{% include "components/_icon.html" with name="eye" %}</span>
-                        <span x-show="visible" x-cloak>{% include "components/_icon.html" with name="eye-off" %}</span>
-                    </button>
-                </div>
-            {% else %}
-                {{ field }}
-            {% endif %}
-        {% endif %}
-        {% if field.help_text %}
-            {# Django's password validators help text is an HTML list — render it in a div, not a p. #}
-            <div class="form-help mt-1.5 text-xs text-slate-500 dark:text-slate-400" id="{{ field.id_for_label }}_helptext">{{ field.help_text }}</div>
-        {% endif %}
-        {% if field.errors %}
-            {# One container keeps the {field_id}_error id unique; Django points aria-describedby at it. #}
-            <ul class="field-error mt-1.5 space-y-0.5 text-xs font-medium text-red-600 dark:text-red-400" id="{{ field.id_for_label }}_error">
-                {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
-            </ul>
-        {% endif %}
+                {% endif %}
+                {% if field.help_text %}
+                    <div class="form-help mt-1.5 text-xs text-slate-500 dark:text-slate-400" id="{{ field.id_for_label }}_helptext">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                    {# One container keeps the {field_id}_error id unique; Django points aria-describedby at it. #}
+                    <ul class="field-error mt-1.5 space-y-0.5 text-sm font-medium text-red-600 dark:text-red-400" id="{{ field.id_for_label }}_error">
+                        {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endfor %}
     </div>
-{% endfor %}
+{% endif %}

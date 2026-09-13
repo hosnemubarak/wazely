@@ -41,7 +41,7 @@
 @layer components {
   /* Buttons */
   .btn {
-    @apply inline-flex h-9 items-center justify-center gap-2 rounded-md px-4 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex h-10 items-center justify-center gap-2 rounded-md px-4 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 disabled:pointer-events-none disabled:opacity-50;
   }
   .btn-primary {
     @apply bg-brand-600 text-white shadow-xs hover:bg-brand-700;
@@ -60,7 +60,7 @@
      Django-rendered widgets ({{ field }}), which cannot carry classes. */
   .input,
   .form-field :where(input:not([type="checkbox"], [type="radio"], [type="hidden"], [type="submit"], [type="button"]), select, textarea) {
-    @apply h-9 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-xs transition-colors placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500;
+    @apply h-10 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-xs transition-colors placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/10 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500;
   }
   .form-field textarea {
     @apply h-auto min-h-20;
@@ -68,22 +68,38 @@
   .form-field input[type="checkbox"] {
     @apply size-4 shrink-0 accent-brand-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600;
   }
-  /* Password fields carry a reveal toggle; keep the right padding after the
-     input flips to type="text" (keyed on the wrapper, not the input type). */
-  .input-with-toggle input {
-    @apply pr-10;
+  /* Password inputs render masked with no reveal affordance: the custom
+     toggle is deliberately gone, and Edge's native reveal eye is hidden too,
+     so nothing on the page can unmask a password. */
+  input::-ms-reveal,
+  input::-ms-clear {
+    display: none;
+  }
+  /* Browsers paint autofilled inputs yellow/black; keep the system palette
+     without clobbering the focus ring (hence the transition trick, not an
+     inset box-shadow). */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active,
+  input:autofill,
+  input:autofill:hover,
+  input:autofill:focus,
+  input:autofill:active {
+    transition: background-color 9999s ease-in-out 0s;
+  }
+  input:-webkit-autofill,
+  input:autofill {
+    -webkit-text-fill-color: var(--color-slate-900);
+  }
+  [data-theme="dark"] input:-webkit-autofill,
+  [data-theme="dark"] input:autofill {
+    -webkit-text-fill-color: var(--color-slate-100);
   }
   .form-field input[aria-invalid="true"],
   .form-field select[aria-invalid="true"],
   .form-field textarea[aria-invalid="true"] {
     @apply border-red-300 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500/50;
-  }
-  /* Django's password validators emit a bare <ul> as help text. */
-  .form-help ul {
-    @apply mt-1 list-disc space-y-0.5 pl-4;
-  }
-  .form-help a {
-    @apply font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300;
   }
 
   /* Cards */

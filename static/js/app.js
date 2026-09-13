@@ -1,7 +1,7 @@
 /*
  * Wazely front-end behaviors: theme toggle, sidebar collapse, toast lifecycle,
- * password visibility, SPA navigation sync (active nav, page title, focus,
- * progress bar, error toasts), and the HTMX -> Alpine re-initialization hook.
+ * SPA navigation sync (active nav, page title, focus, progress bar, error
+ * toasts), and the HTMX -> Alpine re-initialization hook.
  *
  * Loaded with `defer` BEFORE htmx.min.js and alpine.min.js.
  */
@@ -247,10 +247,10 @@
         );
     }
 
-    /* HTMX partials contain Alpine components (e.g. the password visibility
-       toggle inside swapped auth forms); re-scan swapped content. Page-content
-       swaps additionally sync nav/title/focus; any swap may have delivered
-       OOB toasts that need their reduced-motion auto-dismiss timer. */
+    /* HTMX partials contain Alpine components (dropdowns, modals, drawer);
+       re-scan swapped content. Page-content swaps additionally sync
+       nav/title/focus; any swap may have delivered OOB toasts that need their
+       reduced-motion auto-dismiss timer. */
     document.body.addEventListener("htmx:afterSwap", function (e) {
         if (window.Alpine) {
             window.Alpine.initTree(e.target);
@@ -265,22 +265,6 @@
         }
         armReducedMotionToasts(document);
     });
-
-    /* Alpine component: password visibility toggle. Works on Django-rendered
-       {{ field }} widgets by finding the sibling input at toggle time. */
-    window.wzPassword = function wzPassword() {
-        return {
-            visible: false,
-            toggle: function () {
-                var input = this.$el.querySelector("input");
-                if (!input) {
-                    return;
-                }
-                this.visible = input.type === "password";
-                input.type = this.visible ? "text" : "password";
-            },
-        };
-    };
 
     /* Shared UI store: mobile off-canvas drawer state. Sidebar collapse is
        driven by the data-sidebar html attribute + CSS, not this store. */

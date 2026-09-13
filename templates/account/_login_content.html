@@ -6,8 +6,6 @@
     </div>
     <p class="auth-meta">
         <a href="{% url 'account_signup' %}" class="auth-link" hx-get="{% url 'account_signup' %}" hx-target="#auth-content" hx-swap="innerHTML show:window:top" hx-push-url="true">Create an account</a>
-        <span aria-hidden="true">·</span>
-        <a href="{% url 'account_reset_password' %}" class="auth-link" hx-get="{% url 'account_reset_password' %}" hx-target="#auth-content" hx-swap="innerHTML show:window:top" hx-push-url="true">Forgot password?</a>
     </p>
     {% include "partials/_toasts_oob.html" %}
 </div>

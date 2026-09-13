@@ -2,6 +2,6 @@
 Auth submit button shared by every auth form: `text` is required. The spinner
 is driven by the form's `hx-indicator="#auth-submit-indicator"`.
 {% endcomment %}
-<button type="submit" class="btn btn-primary {{ extra_class|default:'mt-2 w-full' }}">
+<button type="submit" class="btn btn-primary {{ extra_class|default:'mt-6 w-full' }}">
     {{ text }}<span id="auth-submit-indicator" class="htmx-indicator ml-1 inline-flex" aria-hidden="true">{% include "components/_spinner.html" %}</span>
 </button>

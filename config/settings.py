@@ -205,3 +205,9 @@ ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
 ACCOUNT_LOGOUT_REDIRECT_URL = "account_login"
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = os.getenv("ACCOUNT_DEFAULT_HTTP_PROTOCOL", "http")
 ACCOUNT_ADAPTER = "apps.accounts.adapter.AccountAdapter"
+ACCOUNT_FORMS = {
+    "login": "apps.accounts.forms.LoginForm",
+    "signup": "apps.accounts.forms.SignupForm",
+    "reset_password": "apps.accounts.forms.ResetPasswordForm",
+    "reset_password_from_key": "apps.accounts.forms.ResetPasswordKeyForm",
+}

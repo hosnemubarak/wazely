@@ -13,6 +13,7 @@ from django.urls import reverse
 from allauth.account.models import EmailAddress, EmailConfirmationHMAC
 
 from . import views as account_views
+from .forms import LoginForm, ResetPasswordKeyForm
 from .views import HTMXAccountMixin, is_auth_shell_url
 
 User = get_user_model()
@@ -29,12 +30,29 @@ class SignupFlowTests(TestCase):
     def test_signup_creates_unverified_user_and_sends_email(self):
         response = self.client.post(
             reverse("account_signup"),
-            {"email": "user@example.com", "password1": "correct-horse-battery", "password2": "correct-horse-battery"},
+            {
+                "email": "user@example.com",
+                "password1": "correct-horse-battery",
+                "password2": "correct-horse-battery",
+            },
         )
         self.assertEqual(response.status_code, 302)
         self.assertTrue(User.objects.filter(email="user@example.com").exists())
         self.assertFalse(EmailAddress.objects.get(user__email="user@example.com").verified)
         self.assertEqual(len(mail.outbox), 1)
+
+    def test_signup_rejects_mismatched_passwords(self):
+        response = self.client.post(
+            reverse("account_signup"),
+            {
+                "email": "mismatch@example.com",
+                "password1": "correct-horse-battery",
+                "password2": "different-horse-battery",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("password2", response.context["form"].errors)
+        self.assertFalse(User.objects.filter(email="mismatch@example.com").exists())
 
 
 class LoginTests(TestCase):
@@ -101,7 +119,7 @@ class LoginTests(TestCase):
         content = self.client.get(reverse("account_login")).content.decode()
         self.assertRegex(
             content,
-            r'<div class="form-field mb-4">\s*<div class="flex items-center gap-2">\s*<input type="checkbox" name="remember"',
+            r'<div class="form-field">\s*<div class="flex items-center gap-2">\s*<input type="checkbox" name="remember"',
         )
 
 
@@ -178,15 +196,13 @@ class PasswordValidationTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(User.objects.filter(email="strong@example.com").exists())
 
-    def test_requirements_render_as_a_styled_help_list(self):
+    def test_requirements_render_as_one_summary_line(self):
         response = self.client.get(reverse("account_signup"))
         self.assertRegex(
             response.content.decode(),
-            r'<div class="form-help[^"]*" id="id_password1_helptext">',
+            r'<div class="form-help[^"]*" id="id_password1_helptext">[^<]*8 characters[^<]*</div>',
         )
-        self.assertContains(response, "must contain at least 8 characters")
-        self.assertContains(response, "single repeated character")
-        self.assertContains(response, "simple sequence")
+        self.assertNotContains(response, "must contain at least 8 characters")
 
     def test_multiple_errors_render_one_idempotent_container(self):
         response = self.client.post(
@@ -202,25 +218,109 @@ class PasswordValidationTests(TestCase):
         self.assertGreaterEqual(container.group(1).count("<li>"), 2)
 
 
-class PasswordToggleTests(TestCase):
-    def test_every_password_field_gets_a_visibility_toggle(self):
-        response = self.client.get(reverse("account_signup"))
-        content = response.content.decode()
-        self.assertEqual(content.count('x-data="wzPassword"'), 2)
-        self.assertContains(response, 'aria-controls="id_password1"')
-        self.assertContains(response, 'aria-controls="id_password2"')
-        self.assertContains(response, 'aria-label="Show password"')
-        self.assertContains(response, ":aria-label=\"visible ? 'Hide password' : 'Show password'\"")
+class PasswordMaskingTests(TestCase):
+    """Password fields render masked with no reveal affordance anywhere."""
 
-    def test_login_has_exactly_one_password_toggle(self):
-        response = self.client.get(reverse("account_login"))
-        self.assertEqual(response.content.decode().count('x-data="wzPassword"'), 1)
+    def test_no_reveal_toggle_is_rendered(self):
+        for name in ("account_login", "account_signup"):
+            with self.subTest(route=name):
+                content = self.client.get(reverse(name)).content.decode()
+                self.assertNotIn("wzPassword", content)
+                self.assertNotIn("input-with-toggle", content)
+                self.assertNotIn('aria-label="Show password"', content)
+                self.assertNotIn('aria-controls="id_password', content)
 
-    def test_password_input_and_built_css_keep_the_toggle_padding(self):
-        content = self.client.get(reverse("account_login")).content.decode()
-        self.assertIn('class="relative input-with-toggle" x-data="wzPassword"', content)
+    def test_password_inputs_are_masked_by_default(self):
+        for name, expected in (("account_login", 1), ("account_signup", 2)):
+            with self.subTest(route=name):
+                content = self.client.get(reverse(name)).content.decode()
+                masked = re.findall(r'<input type="password" name="password\d?"', content)
+                self.assertEqual(len(masked), expected)
+                self.assertNotRegex(content, r'<input type="text" name="password')
+
+    def test_native_reveal_eyes_are_hidden_by_the_built_css(self):
         built_css = (settings.BASE_DIR / "static" / "css" / "app.css").read_text(encoding="utf-8")
-        self.assertIn(".input-with-toggle", built_css, "run the Tailwind build and commit app.css")
+        self.assertIn("::-ms-reveal", built_css, "Edge's native reveal eye must stay hidden")
+        self.assertIn("::-ms-clear", built_css)
+        self.assertNotIn(".input-with-toggle", built_css)
+
+    def test_password_is_never_echoed_back_after_a_failed_login(self):
+        response = self.client.post(
+            reverse("account_login"),
+            {"login": "echo@example.com", "password": "SuperSecretValue123"},
+            headers={"HX-Request": "true"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "SuperSecretValue123")
+
+
+class AccountFormsTests(TestCase):
+    """The form overrides registered via ACCOUNT_FORMS."""
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create_user("forms@example.com", "correct-horse-battery")
+
+    def test_login_form_flags_the_forgot_password_link_and_drops_help_text(self):
+        form = LoginForm()
+        self.assertTrue(form.fields["password"].show_forgot_password_link)
+        self.assertEqual(form.fields["password"].help_text, "")
+
+    def test_reset_key_form_asks_for_the_password_once_with_summary_help(self):
+        form = ResetPasswordKeyForm(user=self.user, temp_key="abc")
+        self.assertNotIn("password2", form.fields)
+        self.assertIn("8 characters", form.fields["password1"].help_text)
+        self.assertNotIn("placeholder", form.fields["password1"].widget.attrs)
+
+    def test_reset_key_password_field_is_masked(self):
+        form = ResetPasswordKeyForm(user=self.user, temp_key="abc")
+        self.assertEqual(form.fields["password1"].widget.input_type, "password")
+
+
+class AccountFormPresentationTests(TestCase):
+    """One reset link, example placeholders, one password field, one help line."""
+
+    def test_login_shows_one_forgot_password_link_on_the_password_label_row(self):
+        content = self.client.get(reverse("account_login")).content.decode()
+        self.assertEqual(content.count("Forgot password?"), 1)
+        self.assertEqual(content.count("Forgot your password?"), 0)
+        self.assertRegex(
+            content,
+            r'<label for="id_password"[^>]*>Password</label>\s*'
+            r'<a href="/accounts/password/reset/" class="auth-link text-xs"',
+        )
+
+    def test_email_fields_use_an_example_placeholder(self):
+        for name in ("account_login", "account_signup", "account_reset_password"):
+            with self.subTest(route=name):
+                content = self.client.get(reverse(name)).content.decode()
+                self.assertIn('placeholder="you@example.com"', content)
+                self.assertNotIn('placeholder="Email address"', content)
+
+    def test_password_fields_have_no_placeholder(self):
+        for name in ("account_login", "account_signup"):
+            with self.subTest(route=name):
+                content = self.client.get(reverse(name)).content.decode()
+                self.assertNotIn('placeholder="Password"', content)
+                self.assertNotIn('placeholder="Password (again)"', content)
+
+    def test_signup_asks_to_confirm_the_password(self):
+        content = self.client.get(reverse("account_signup")).content.decode()
+        self.assertIn('id="id_password2"', content)
+        self.assertIn("Password (again)", content)
+
+    def test_fields_stack_with_body_size_labels(self):
+        content = self.client.get(reverse("account_login")).content.decode()
+        self.assertIn('<div class="space-y-5">', content)
+        self.assertRegex(
+            content,
+            r'<label for="id_login" class="text-sm font-medium text-slate-700 dark:text-slate-300">',
+        )
+        error_page = self.client.post(
+            reverse("account_signup"),
+            {"email": "size@example.com", "password1": "12345678", "password2": "12345678"},
+        ).content.decode()
+        self.assertRegex(error_page, r'<ul class="field-error[^"]*text-sm')
 
 
 class AuthSPANavigationTests(TestCase):

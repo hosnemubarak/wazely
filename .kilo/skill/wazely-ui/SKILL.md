@@ -31,9 +31,9 @@ Invoke-WebRequest https://github.com/tailwindlabs/tailwindcss/releases/latest/do
   after `app.js` and `htmx.min.js`.
 - **HTMX 2.0.6** vendored at `static/js/htmx.min.js`.
 - `static/js/app.js` — theme toggle, sidebar collapse, toast lifecycle,
-  `wzPassword` component, SPA navigation sync (active nav, page title, focus,
-  progress bar, error toasts), and the `htmx:afterSwap` → `Alpine.initTree`
-  hook (required: swapped partials contain Alpine components).
+  SPA navigation sync (active nav, page title, focus, progress bar, error
+  toasts), and the `htmx:afterSwap` → `Alpine.initTree` hook (required:
+  swapped partials contain Alpine components).
 - Fonts: Inter (variable) + JetBrains Mono from Google Fonts.
 
 If you edit classes in any template under `templates/` or `apps/*/templates/`,
@@ -129,8 +129,7 @@ Component primitives live in `templates/components/`. Include signatures:
 - CSS component classes (defined once in `app.src.css` with `@apply`):
   `.btn` + `.btn-primary|secondary|ghost|danger`, `.input`, `.card`,
   `.badge-*`, `.page-title`, `.auth-title`, `.auth-subtitle`,
-  `.auth-icon-badge`, `.auth-meta`, `.auth-link`, `.form-help`,
-  `.input-with-toggle`, `.nav-item`
+  `.auth-icon-badge`, `.auth-meta`, `.auth-link`, `.nav-item`
   (+ `[aria-current="page"]` active state), `.sidebar`, `.sidebar-label`,
   `.sidebar-tip`, `.sidebar-item`, `.sidebar-center`, `.main-shell`, `.toast`,
   `.toast-close`, `.toast-icon-*`, `.spinner`, `.tooltip`, `.modal`,
@@ -196,20 +195,32 @@ append an error toast via `htmx:responseError`; `document.title` syncs from
 
 ## Forms and toasts
 
-- `partials/_form_fields.html` renders Django forms: labels (`text-xs
-  font-medium`), non-field errors (`.form-errors`, `role="alert"`), per-field
-  errors in one `.field-error` container with id `{field_id}_error` (one `<li>`
-  per error — keep it a single element: Django's automatic `aria-describedby`
-  and `aria-invalid="true"` point at that id, so duplicates would be invalid
-  and only the first error announced), help text in a `.form-help` div (id
-  `{field_id}_helptext` to match the same `aria-describedby`; keep it a `div`,
-  not a `p`, because Django's password-validator help is a `<ul>` that
-  `.form-help ul` styles), the Alpine password visibility toggle
-  (`x-data="wzPassword"`, wrapped in `.relative.input-with-toggle` so the
-  right padding survives the flip to `type="text"`, `aria-controls` the input,
-  `:aria-label` toggles Show/Hide), and checkboxes rendered inline in their
-  row (`accent-brand-600`, label beside the input) rather than under a block
-  label.
+- `partials/_form_fields.html` renders Django forms as a `space-y-5` stack:
+  labels (`text-sm font-medium`) sit on a flex row that can host a label
+  action — `apps.accounts.forms.LoginForm` sets
+  `field.show_forgot_password_link` so the password label row carries the
+  single "Forgot password?" link (`auth-link text-xs`, swaps `#auth-content`);
+  non-field errors (`.form-errors`, `role="alert"`); per-field errors in one
+  `.field-error` container (`text-sm`, id `{field_id}_error`, one `<li>` per
+  error — keep it a single element: Django's automatic `aria-describedby` and
+  `aria-invalid="true"` point at that id); help text in a `.form-help` div (id
+  `{field_id}_helptext`) — one summary line set by the form overrides, not
+  Django's per-validator list; and checkboxes inline in their row
+  (`accent-brand-600`, label beside the input). Inputs and buttons are `h-10`,
+  and autofilled inputs stay on the system palette
+  (`input:-webkit-autofill`/`:autofill` rules use the background-transition
+  trick so the focus ring survives).
+- Password fields render masked with **no reveal affordance**: there is no
+  custom toggle, and `input::-ms-reveal`/`::-ms-clear` are hidden so Edge's
+  native eye is gone too — nothing on the page can unmask a password.
+- Signup asks for the password twice: `ACCOUNT_SIGNUP_FIELDS` keeps
+  `password2` and allauth enforces the match (placeholders stripped by the
+  form overrides). The set-password (reset from key) form deliberately asks
+  once — `apps.accounts/forms.py`
+  (registered via `ACCOUNT_FORMS`) drops its confirmation field there, uses
+  `you@example.com` example placeholders, suppresses allauth's under-field
+  reset link, and replaces the validator list with the one-line requirement
+  summary on `password1`.
 - `account/_auth_form.html` renders `{{ redirect_field }}` (allauth's hidden
   `next` input) so `?next=` survives login; keep it when changing the form
   shell. Every auth form that is HTMX-driven goes through this shell —
