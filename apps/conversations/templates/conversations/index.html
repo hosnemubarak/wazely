@@ -1,6 +1,3 @@
 {% extends "shell.html" %}
 {% block title %}Conversations · Wazely{% endblock %}
-{% block page_title %}Conversations{% endblock %}
-{% block content %}
-{% include "components/_empty_state.html" with icon="message-circle" title="No conversations yet" description="Your WhatsApp conversations will appear here once you connect an account." %}
-{% endblock %}
+{% block content %}{% include "conversations/_content.html" %}{% endblock %}

@@ -50,3 +50,14 @@ class GalleryTests(TestCase):
         content = response.render().content.decode()
         self.assertIn("Component gallery", content)
         self.assertIn("btn-primary", content)
+
+    def test_gallery_htmx_request_renders_partial(self):
+        request = RequestFactory().get("/ui/", headers={"HX-Request": "true"})
+        request.user = self.user
+        response = ComponentGalleryView.as_view()(request)
+        self.assertEqual(response.status_code, 200)
+        content = response.render().content.decode()
+        self.assertIn("Component gallery", content)
+        self.assertIn('data-page-title="Component gallery · Wazely"', content)
+        self.assertNotIn("<!DOCTYPE html>", content)
+        self.assertNotIn("main-shell", content)

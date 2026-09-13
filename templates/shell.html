@@ -5,16 +5,7 @@
     {% include "partials/_sidebar.html" %}
     <div class="main-shell">
         {% include "partials/_navbar.html" %}
-        <main id="main-content" class="flex-1 px-6 py-8 lg:px-8">
-            {% block page_header %}
-                <div class="mb-8">
-                    {% block breadcrumb %}{% endblock %}
-                    <div class="mt-2 flex flex-wrap items-center justify-between gap-4">
-                        <h1 class="text-2xl font-semibold tracking-tight">{% block page_title %}Wazely{% endblock %}</h1>
-                        <div class="flex items-center gap-3">{% block page_actions %}{% endblock %}</div>
-                    </div>
-                </div>
-            {% endblock %}
+        <main id="main-content" class="flex-1 px-6 py-8 lg:px-8" hx-history-elt>
             {% block content %}{% endblock %}
         </main>
     </div>

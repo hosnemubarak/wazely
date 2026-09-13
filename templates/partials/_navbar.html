@@ -38,7 +38,7 @@
                     <p class="truncate text-sm font-medium text-slate-900 dark:text-slate-100">{{ request.user.email }}</p>
                 </div>
                 <div class="p-1.5">
-                    <a href="{% url 'organizations:settings' %}" class="flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100">
+                    <a href="{% url 'organizations:settings' %}" hx-get="{% url 'organizations:settings' %}" hx-target="#main-content" hx-swap="innerHTML show:window:top" hx-push-url="true" class="flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100">
                         {% include "components/_icon.html" with name="settings" %}
                         Settings
                     </a>

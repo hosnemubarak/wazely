@@ -1,6 +1,3 @@
 {% extends "shell.html" %}
 {% block title %}Agents · Wazely{% endblock %}
-{% block page_title %}Agents{% endblock %}
-{% block content %}
-{% include "components/_empty_state.html" with icon="bot" title="No agents yet" description="AI agents will help your team draft replies from your knowledge base." %}
-{% endblock %}
+{% block content %}{% include "agents/_content.html" %}{% endblock %}

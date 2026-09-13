@@ -35,6 +35,14 @@ and the thin glue between them.
   `static/js/alpine.min.js`; both load in `base.html`. Do not add other
   client-side frameworks or npm dependencies — the frontend is built with the
   Tailwind standalone binary (see the `wazely-ui` skill).
+- Wazely is a server-rendered HTMX SPA. New dashboard features render their
+  content partial for `HX-Request` requests via `SPAContentMixin`
+  (`apps.core.mixins`, first in the MRO) — the page template extends
+  `shell.html` and includes `<app>/_content.html`. In-app links navigate by
+  swapping `#main-content` (`hx-get` + `hx-target` + `hx-swap` +
+  `hx-push-url`), never by full-page navigation, and never via `hx-boost`.
+  No React/Vue/Angular or any client-side SPA framework unless explicitly
+  requested.
 
 ## Related skills
 

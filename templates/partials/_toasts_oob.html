@@ -1,0 +1,11 @@
+{% comment %}
+Django messages as out-of-band toasts for partial (HX-Request) responses:
+each toast carries hx-swap-oob so htmx appends it to the persistent
+#toast-container instead of swapping it into #main-content. No-ops on full
+page renders — base.html's partials/_messages.html owns those.
+{% endcomment %}
+{% if request.META.HTTP_HX_REQUEST %}
+    {% for message in messages %}
+        {% include "components/_toast.html" with variant=message.tags|default:'info' text=message oob=True %}
+    {% endfor %}
+{% endif %}

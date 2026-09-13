@@ -58,6 +58,7 @@ THIRD_PARTY_APPS: list[str] = [
 ]
 
 LOCAL_APPS = [
+    "apps.core",
     "apps.accounts",
     "apps.organizations",
     "apps.whatsapp",
@@ -80,6 +81,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "apps.core.middleware.HTMXLoginRedirectMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"

@@ -1,4 +1,4 @@
-<div class="toast" role="{% if variant == 'error' %}alert{% else %}status{% endif %}">
+<div class="toast" role="{% if variant == 'error' %}alert{% else %}status{% endif %}"{% if oob %} hx-swap-oob="beforeend:#toast-container"{% endif %}>
     <span class="shrink-0 toast-icon-{{ variant|default:'info' }}" aria-hidden="true">
         {% if variant == "success" %}
             {% include "components/_icon.html" with name="check-circle" %}

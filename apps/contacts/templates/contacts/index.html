@@ -1,6 +1,3 @@
 {% extends "shell.html" %}
 {% block title %}Contacts · Wazely{% endblock %}
-{% block page_title %}Contacts{% endblock %}
-{% block content %}
-{% include "components/_empty_state.html" with icon="user" title="No contacts yet" description="Everyone you talk to on WhatsApp will be listed here." %}
-{% endblock %}
+{% block content %}{% include "contacts/_content.html" %}{% endblock %}

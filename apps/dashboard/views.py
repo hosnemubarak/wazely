@@ -1,12 +1,14 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 
+from apps.core.mixins import SPAContentMixin
 
-class HomeView(LoginRequiredMixin, TemplateView):
+
+class HomeView(SPAContentMixin, LoginRequiredMixin, TemplateView):
     template_name = "dashboard/home.html"
 
 
-class ComponentGalleryView(LoginRequiredMixin, TemplateView):
+class ComponentGalleryView(SPAContentMixin, LoginRequiredMixin, TemplateView):
     """DEBUG-only manual QA surface for the component library."""
 
     template_name = "dashboard/ui_gallery.html"

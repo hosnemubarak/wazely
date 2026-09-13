@@ -64,6 +64,20 @@ Each one is intentionally empty and reserves a bounded context for future work.
 - Prefer small, verifiable changes; `python manage.py check` must stay clean.
 - Add dependencies only when a requested feature needs them.
 
+### Frontend architecture
+
+The authenticated area is a server-rendered HTMX SPA: the shell (sidebar,
+navbar, `#toast-container`) renders once and only `#main-content` swaps.
+Dashboard views use `SPAContentMixin` from `apps.core` to serve their content
+partial (`<app>/_content.html`) for `HX-Request` and the full page otherwise;
+in-app links keep their `href` and add `hx-get` + `hx-target="#main-content"`
++ `hx-swap="innerHTML show:window:top"` + `hx-push-url="true"` (no
+`hx-boost`). Login redirects for HTMX requests are converted to
+`204 + HX-Redirect` by `apps.core.middleware.HTMXLoginRedirectMiddleware`.
+No React/Vue/Angular or any client-side SPA framework. Auth pages keep full
+navigation between pages; only their form submissions are HTMX. See the
+`htmx-patterns` skill ("SPA shell pattern") for the full contract.
+
 ## Working Agreement
 
 **Do not implement features unless explicitly requested.** When asked for work, stay within

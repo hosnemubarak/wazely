@@ -99,6 +99,12 @@
     @apply bg-slate-100 text-slate-600 ring-slate-500/20 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-400/20;
   }
 
+  /* Page header — lives inside content partials so it swaps with the page.
+     tabindex="-1" lets app.js move focus to the heading after a swap. */
+  .page-title {
+    @apply text-2xl font-semibold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600;
+  }
+
   /* Navigation */
   .nav-item {
     @apply flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100;
@@ -244,4 +250,36 @@
 }
 .htmx-request .htmx-indicator {
   opacity: 1;
+}
+
+/* SPA navigation progress bar — created by app.js, shown ~200ms into a
+   pending request. Indeterminate grow; hidden under reduced motion. */
+.htmx-progress {
+  @apply pointer-events-none fixed inset-x-0 top-0 z-60 h-0.5;
+}
+.htmx-progress::before {
+  content: "";
+  display: block;
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--color-brand-600), var(--color-brand-400));
+}
+@keyframes wazely-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(0.95);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .htmx-progress-active::before {
+    animation: wazely-progress 8s ease-out forwards;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .htmx-progress {
+    display: none;
+  }
 }

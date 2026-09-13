@@ -31,8 +31,9 @@ Invoke-WebRequest https://github.com/tailwindlabs/tailwindcss/releases/latest/do
   after `app.js` and `htmx.min.js`.
 - **HTMX 2.0.6** vendored at `static/js/htmx.min.js`.
 - `static/js/app.js` — theme toggle, sidebar collapse, toast lifecycle,
-  `wzPassword` component, and the `htmx:afterSwap` → `Alpine.initTree` hook
-  (required: swapped auth partials contain Alpine components).
+  `wzPassword` component, SPA navigation sync (active nav, page title, focus,
+  progress bar, error toasts), and the `htmx:afterSwap` → `Alpine.initTree`
+  hook (required: swapped partials contain Alpine components).
 - Fonts: Inter (variable) + JetBrains Mono from Google Fonts.
 
 If you edit classes in any template under `templates/` or `apps/*/templates/`,
@@ -59,7 +60,7 @@ Brand ramp (emerald): `brand-50 #ecfdf5` → `brand-500 #10b981` →
 | Role | Classes |
 |---|---|
 | Auth headline | `text-3xl font-semibold tracking-tight` |
-| Page title | `text-2xl font-semibold tracking-tight` |
+| Page title | `.page-title` (= `text-2xl font-semibold tracking-tight`, with `focus-visible` outline for post-swap focus) |
 | Section | `text-lg font-semibold` |
 | Card title | `text-sm font-semibold` |
 | Body | `text-sm` |
@@ -112,6 +113,7 @@ Component primitives live in `templates/components/`. Include signatures:
 {% include "components/_modal.html" with open_text="Open" title="..." body="..." action_text="Confirm" %}
 {% include "components/_alert.html" with variant="error" title="..." text="..." %}
 {% include "components/_toast.html" with variant="success" text="..." %}
+{% include "components/_page_header.html" with title="Conversations" %} {# optional breadcrumb/actions — pre-rendered HTML, never user input #}
 {% include "components/_spinner.html" %} {# optional size="24" #}
 {% include "components/_tooltip.html" with label="..." content="Hover me" %}
 {% include "components/_icon.html" with name="settings" %} {# optional size, icon_class #}
@@ -126,10 +128,11 @@ Component primitives live in `templates/components/`. Include signatures:
   (Lucide paths) — no icon package.
 - CSS component classes (defined once in `app.src.css` with `@apply`):
   `.btn` + `.btn-primary|secondary|ghost|danger`, `.input`, `.card`,
-  `.badge-*`, `.nav-item` (+ `[aria-current="page"]` active state), `.sidebar`,
-  `.sidebar-label`, `.sidebar-tip`, `.sidebar-item`, `.sidebar-center`,
-  `.main-shell`, `.toast`, `.toast-close`, `.toast-icon-*`, `.spinner`,
-  `.tooltip`, `.modal`. Everything else is utilities in templates.
+  `.badge-*`, `.page-title`, `.nav-item` (+ `[aria-current="page"]` active
+  state), `.sidebar`, `.sidebar-label`, `.sidebar-tip`, `.sidebar-item`,
+  `.sidebar-center`, `.main-shell`, `.toast`, `.toast-close`, `.toast-icon-*`,
+  `.spinner`, `.tooltip`, `.modal`, `.htmx-progress`. Everything else is
+  utilities in templates.
 - Dropdowns: Alpine `x-data="{ open: false }"` + `@click.outside` +
   `@keydown.escape.window`, `:aria-expanded`, `aria-haspopup="true"`, menu is
   `x-cloak x-show="open"` with `origin-top-right` transition classes.
@@ -147,20 +150,41 @@ component changes.
   `alpine.min.js`, all `defer`). Blocks: `title`, `body`, `extra_css`,
   `extra_js`. Body carries `hx-headers` CSRF.
 - `shell.html` — authenticated app shell: off-canvas overlay, sidebar,
-  navbar, `<main>`. Blocks: `page_header`, `breadcrumb`, `page_title`,
-  `page_actions`, `content`. (Blocks render inside `main`; the navbar is
-  include-rendered and cannot carry child blocks.)
+  navbar, `<main id="main-content" hx-history-elt>` with only
+  `{% block content %}`. Page headers are not blocks here anymore — blocks
+  don't propagate through includes, so anything that must swap with the page
+  lives in the content partial.
+- Content partials — every dashboard page splits into
+  `<app>/index.html` (extends `shell.html`, `{% block title %}` + include)
+  and `<app>/_content.html` (other pages: `<app>/_<page>_content.html`).
+  The partial's root element carries `data-page-title="… · Wazely"`, then
+  includes `components/_page_header.html` (h1 with `tabindex="-1"` so
+  `app.js` can focus it after a swap), the page body, and ends with
+  `partials/_toasts_oob.html`. The title string is duplicated in
+  `{% block title %}` and `data-page-title` — keep them identical.
 - `partials/_sidebar.html` — groups: Overview / Workspace (Conversations,
   Contacts, WhatsApp Accounts) / AI (Agents, Knowledge Base) / Management
   (Team, Settings). `w-64` ↔ `w-16` collapse, tooltips when collapsed, user
   block + logout at the bottom. Below `lg`: off-canvas drawer with overlay,
-  Esc to close, body scroll lock.
+  Esc to close, body scroll lock. Nav links keep `href` (progressive
+  enhancement) and carry `hx-get` + `hx-target="#main-content"` +
+  `hx-swap="innerHTML show:window:top"` + `hx-push-url="true"` for SPA
+  navigation; server-side `aria-current` covers full renders and `app.js`
+  re-syncs it on every swap (history restores included).
 - `partials/_navbar.html` — sidebar toggles, disabled search with "Coming
   soon" tooltip, notifications dropdown (empty state), theme toggle, user
-  menu (email, Settings, Log out). No workspace switcher.
+  menu (email, Settings, Log out). The Settings link joins the SPA swap
+  attributes; logout stays `hx-post` (returns `HX-Redirect`). No workspace
+  switcher.
 - `account/base.html` — auth split shell: form column (`max-w-sm`, vertically
   centered) + emerald brand panel (`hidden lg:flex`, gradient, value prop +
-  3 proof points). Single column with compact brand header below `lg`.
+  3 proof points). Single column with compact brand header below `lg`. Auth
+  pages keep full navigation — only form submissions are HTMX.
+
+SPA UX states: a delayed global top progress bar (`.htmx-progress`, hidden
+under `prefers-reduced-motion`) runs on every htmx request; failed requests
+append an error toast via `htmx:responseError`; `document.title` syncs from
+`data-page-title` on every swap.
 
 ## Forms and toasts
 
@@ -177,11 +201,15 @@ component changes.
   button.
 - Toasts: Django messages render through `partials/_messages.html`, which
   includes `components/_toast.html` per message, into `#toast-container`
-  (bottom-right, `aria-live="polite"`). Styling is CSS-only (`.toast-*` in
+  (bottom-right, `aria-live="polite"`). Content partials instead include
+  `partials/_toasts_oob.html`, which renders each message with
+  `hx-swap-oob="beforeend:#toast-container"` so htmx appends it to the
+  persistent container during SPA swaps. Styling is CSS-only (`.toast-*` in
   `app.src.css`): slide+fade in, auto-dismiss ~5s paused on hover, manual
   dismiss via `[data-toast-close]`, `role="alert"` for errors /
   `role="status"` otherwise; `prefers-reduced-motion` disables animation and
-  `app.js` falls back to a plain ~5s auto-dismiss timer.
+  `app.js` falls back to a plain ~5s auto-dismiss timer (also armed for
+  toasts inserted later — OOB swaps and JS-created error toasts).
 
 ## Do's and Don'ts
 

@@ -1,0 +1,13 @@
+{% comment %}
+Page header inside content partials: `title` is required; `breadcrumb` and
+`actions` are optional pre-rendered HTML strings (never pass untrusted user
+input through them). The h1 carries tabindex="-1" so app.js can move focus to
+it after a content swap.
+{% endcomment %}
+<div class="mb-8">
+    {% if breadcrumb %}{{ breadcrumb|safe }}{% endif %}
+    <div class="mt-2 flex flex-wrap items-center justify-between gap-4">
+        <h1 class="page-title" tabindex="-1">{{ title }}</h1>
+        <div class="flex items-center gap-3">{% if actions %}{{ actions|safe }}{% endif %}</div>
+    </div>
+</div>

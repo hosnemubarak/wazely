@@ -1,6 +1,3 @@
 {% extends "shell.html" %}
 {% block title %}Knowledge Base · Wazely{% endblock %}
-{% block page_title %}Knowledge Base{% endblock %}
-{% block content %}
-{% include "components/_empty_state.html" with icon="book-open" title="Knowledge base is empty" description="Add documents and answers your AI agents can draw on when replying to customers." %}
-{% endblock %}
+{% block content %}{% include "knowledge/_content.html" %}{% endblock %}

@@ -8,7 +8,7 @@
 {% url 'organizations:settings' as settings_url %}
 <aside class="sidebar" :class="$store.ui.drawerOpen ? 'translate-x-0' : ''" aria-label="Main navigation">
     <div class="flex h-16 shrink-0 items-center gap-2.5 border-b border-slate-200 px-4 dark:border-white/10">
-        <a href="{{ home_url }}" class="sidebar-brand flex min-w-0 flex-1 items-center gap-2.5 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">
+        <a href="{{ home_url }}" class="sidebar-brand flex min-w-0 flex-1 items-center gap-2.5 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600" hx-get="{{ home_url }}" hx-target="#main-content" hx-swap="innerHTML show:window:top" hx-push-url="true" @click="$store.ui.drawerOpen = false">
             <span class="flex size-8 shrink-0 items-center justify-center rounded-md bg-brand-600 text-white">
                 {% include "components/_icon.html" with name="message-circle" size="16" %}
             </span>
@@ -22,7 +22,7 @@
         <div class="space-y-0.5">
             <p class="sidebar-section-title">Overview</p>
             <div class="sidebar-item group relative">
-                <a href="{{ home_url }}" class="nav-item sidebar-center"{% if request.path == home_url %} aria-current="page"{% endif %}>
+                <a href="{{ home_url }}" class="nav-item sidebar-center" hx-get="{{ home_url }}" hx-target="#main-content" hx-swap="innerHTML show:window:top" hx-push-url="true" @click="$store.ui.drawerOpen = false"{% if request.path == home_url %} aria-current="page"{% endif %}>
                     {% include "components/_icon.html" with name="layout-dashboard" %}
                     <span class="sidebar-label">Overview</span>
                 </a>
@@ -32,21 +32,21 @@
         <div class="mt-6 space-y-0.5">
             <p class="sidebar-section-title">Workspace</p>
             <div class="sidebar-item group relative">
-                <a href="{{ conversations_url }}" class="nav-item sidebar-center"{% if request.path == conversations_url %} aria-current="page"{% endif %}>
+                <a href="{{ conversations_url }}" class="nav-item sidebar-center" hx-get="{{ conversations_url }}" hx-target="#main-content" hx-swap="innerHTML show:window:top" hx-push-url="true" @click="$store.ui.drawerOpen = false"{% if request.path == conversations_url %} aria-current="page"{% endif %}>
                     {% include "components/_icon.html" with name="message-circle" %}
                     <span class="sidebar-label">Conversations</span>
                 </a>
                 <span class="sidebar-tip">Conversations</span>
             </div>
             <div class="sidebar-item group relative">
-                <a href="{{ contacts_url }}" class="nav-item sidebar-center"{% if request.path == contacts_url %} aria-current="page"{% endif %}>
+                <a href="{{ contacts_url }}" class="nav-item sidebar-center" hx-get="{{ contacts_url }}" hx-target="#main-content" hx-swap="innerHTML show:window:top" hx-push-url="true" @click="$store.ui.drawerOpen = false"{% if request.path == contacts_url %} aria-current="page"{% endif %}>
                     {% include "components/_icon.html" with name="user" %}
                     <span class="sidebar-label">Contacts</span>
                 </a>
                 <span class="sidebar-tip">Contacts</span>
             </div>
             <div class="sidebar-item group relative">
-                <a href="{{ whatsapp_url }}" class="nav-item sidebar-center"{% if request.path == whatsapp_url %} aria-current="page"{% endif %}>
+                <a href="{{ whatsapp_url }}" class="nav-item sidebar-center" hx-get="{{ whatsapp_url }}" hx-target="#main-content" hx-swap="innerHTML show:window:top" hx-push-url="true" @click="$store.ui.drawerOpen = false"{% if request.path == whatsapp_url %} aria-current="page"{% endif %}>
                     {% include "components/_icon.html" with name="phone" %}
                     <span class="sidebar-label">WhatsApp Accounts</span>
                 </a>
@@ -56,14 +56,14 @@
         <div class="mt-6 space-y-0.5">
             <p class="sidebar-section-title">AI</p>
             <div class="sidebar-item group relative">
-                <a href="{{ agents_url }}" class="nav-item sidebar-center"{% if request.path == agents_url %} aria-current="page"{% endif %}>
+                <a href="{{ agents_url }}" class="nav-item sidebar-center" hx-get="{{ agents_url }}" hx-target="#main-content" hx-swap="innerHTML show:window:top" hx-push-url="true" @click="$store.ui.drawerOpen = false"{% if request.path == agents_url %} aria-current="page"{% endif %}>
                     {% include "components/_icon.html" with name="bot" %}
                     <span class="sidebar-label">Agents</span>
                 </a>
                 <span class="sidebar-tip">Agents</span>
             </div>
             <div class="sidebar-item group relative">
-                <a href="{{ knowledge_url }}" class="nav-item sidebar-center"{% if request.path == knowledge_url %} aria-current="page"{% endif %}>
+                <a href="{{ knowledge_url }}" class="nav-item sidebar-center" hx-get="{{ knowledge_url }}" hx-target="#main-content" hx-swap="innerHTML show:window:top" hx-push-url="true" @click="$store.ui.drawerOpen = false"{% if request.path == knowledge_url %} aria-current="page"{% endif %}>
                     {% include "components/_icon.html" with name="book-open" %}
                     <span class="sidebar-label">Knowledge Base</span>
                 </a>
@@ -73,14 +73,14 @@
         <div class="mt-6 space-y-0.5">
             <p class="sidebar-section-title">Management</p>
             <div class="sidebar-item group relative">
-                <a href="{{ team_url }}" class="nav-item sidebar-center"{% if request.path == team_url %} aria-current="page"{% endif %}>
+                <a href="{{ team_url }}" class="nav-item sidebar-center" hx-get="{{ team_url }}" hx-target="#main-content" hx-swap="innerHTML show:window:top" hx-push-url="true" @click="$store.ui.drawerOpen = false"{% if request.path == team_url %} aria-current="page"{% endif %}>
                     {% include "components/_icon.html" with name="users" %}
                     <span class="sidebar-label">Team</span>
                 </a>
                 <span class="sidebar-tip">Team</span>
             </div>
             <div class="sidebar-item group relative">
-                <a href="{{ settings_url }}" class="nav-item sidebar-center"{% if request.path == settings_url %} aria-current="page"{% endif %}>
+                <a href="{{ settings_url }}" class="nav-item sidebar-center" hx-get="{{ settings_url }}" hx-target="#main-content" hx-swap="innerHTML show:window:top" hx-push-url="true" @click="$store.ui.drawerOpen = false"{% if request.path == settings_url %} aria-current="page"{% endif %}>
                     {% include "components/_icon.html" with name="settings" %}
                     <span class="sidebar-label">Settings</span>
                 </a>

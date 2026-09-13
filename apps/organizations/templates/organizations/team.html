@@ -1,6 +1,3 @@
 {% extends "shell.html" %}
 {% block title %}Team · Wazely{% endblock %}
-{% block page_title %}Team{% endblock %}
-{% block content %}
-{% include "components/_empty_state.html" with icon="users" title="Team management is coming" description="Invite teammates and manage their access to your workspace." %}
-{% endblock %}
+{% block content %}{% include "organizations/_team_content.html" %}{% endblock %}

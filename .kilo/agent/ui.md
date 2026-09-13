@@ -18,6 +18,10 @@ You make UI and UX decisions for Wazely's operator-facing screens.
 - Work server-rendered first: Django templates + Tailwind utilities, HTMX for
   partial swaps, Alpine.js only for small interactive islands (dropdowns,
   modals, drawer, password toggle).
+- Design every SPA state across content swaps: the global progress bar for
+  slow loads, toasts (including the automatic error toast on failed
+  requests), and empty/error states rendered inside the swapped partial —
+  the shell never re-renders, so the partial must carry them.
 
 ## Related skills
 
