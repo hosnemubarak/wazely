@@ -166,16 +166,44 @@ rendering everything — there is no client-side framework and no `hx-boost`.
   fires on history restores and after the URL was pushed): move
   `aria-current="page"` to the sidebar link matching `location.pathname`, set
   `document.title` from `data-page-title`, focus the new `h1[tabindex="-1"]`,
-  and arm reduced-motion auto-dismiss timers for newly inserted toasts. A
-  delayed (~200ms) global progress bar shows for slow requests, and
-  `htmx:responseError` appends an error toast.
+  and arm reduced-motion auto-dismiss timers for newly inserted toasts. Sync
+  runs only for *page-content swaps* — a swap whose root carries
+  `data-page-title` — so swapping a form with validation errors never steals
+  focus or rewrites the title. A delayed (~200ms) global progress bar shows
+  for slow requests, and `htmx:responseError` appends an error toast (HTTP
+  errors only; transport failures fire `htmx:sendError`/`htmx:timeout`).
+
+### Auth shell (second SPA surface)
+
+The auth area is its own SPA surface: `account/base.html` keeps the brand
+panel and form column, and `#auth-content` (with `hx-history-elt`) is the
+swap target. `HTMXAccountMixin` (`apps/accounts/views.py`) mirrors
+`SPAContentMixin`:
+
+- **POST** renders `htmx_template` (the form partial) → htmx swaps
+  `#auth-form`.
+- **GET** renders `htmx_content_template` (the page content partial) → htmx
+  swaps `#auth-content`; auth links use the same
+  `hx-get`/`hx-target`/`hx-swap`/`hx-push-url` attributes as dashboard links.
+- **Redirects** become `HX-Redirect` (full page load) — except when
+  `htmx_redirect_in_shell` is set and the target resolves to an
+  `AUTH_SHELL_URL_NAMES` page, which becomes
+  `HX-Location: {"path": …, "target": "#auth-content", "swap": "innerHTML"}`.
+  htmx applies that client-side and pushes history, so signup → verify-email
+  and reset → check-email stay in the shell. Login success always leaves the
+  shell (`HX-Redirect` to the dashboard).
+
+Auth forms share `account/_auth_form.html` + `account/_auth_submit.html`.
+Auth pages reached by full page load from an email link (reset from key,
+confirm email) render normally; their in-app links still swap.
 
 ### When NOT to use HTMX navigation
 
-- Auth page transitions (login, signup, password reset) use full navigation;
-  only the form *submissions* are HTMX (`#auth-form` swaps, `HX-Redirect` on
-  success). Do not convert them to SPA swaps.
+- Crossing between top-level shells (login success → dashboard, logout) is a
+  full page load via `HX-Redirect`.
 - External links and downloads stay plain links.
+- Pages whose failure path re-renders a whole document (email confirmation)
+  keep a plain form submission.
 - New dashboard features join the SPA pattern — render the partial for
   `HX-Request` via `SPAContentMixin`; no full-page navigation for in-app
   links.

@@ -1,0 +1,9 @@
+<div data-page-title="Log out · Wazely">
+    <h1 class="auth-title" tabindex="-1">Log out</h1>
+    <p class="auth-subtitle">Are you sure you want to log out?</p>
+    <div class="mt-8">
+        {% url 'account_logout' as action_url %}
+        {% include "account/_auth_form.html" with action_url=action_url submit_text="Log out" %}
+    </div>
+    {% include "partials/_toasts_oob.html" %}
+</div>

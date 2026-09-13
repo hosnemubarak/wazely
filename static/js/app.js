@@ -236,19 +236,32 @@
         updateProgressBar();
     });
 
+    /* A page-content swap carries `data-page-title` (dashboard partials and
+       auth content partials); form-error swaps into #auth-form do not, so they
+       must not move focus or touch the title. */
+    function isPageContentSwap(target) {
+        return Boolean(
+            target &&
+            target.nodeType === 1 &&
+            (target.hasAttribute("data-page-title") || target.querySelector("[data-page-title]"))
+        );
+    }
+
     /* HTMX partials contain Alpine components (e.g. the password visibility
-       toggle inside swapped auth forms); re-scan swapped content. Main-content
+       toggle inside swapped auth forms); re-scan swapped content. Page-content
        swaps additionally sync nav/title/focus; any swap may have delivered
        OOB toasts that need their reduced-motion auto-dismiss timer. */
     document.body.addEventListener("htmx:afterSwap", function (e) {
         if (window.Alpine) {
             window.Alpine.initTree(e.target);
         }
-        if (e.target && e.target.closest && e.target.closest("#" + MAIN_ID)) {
+        if (isPageContentSwap(e.target)) {
             var main = document.getElementById(MAIN_ID);
-            syncActiveNav();
-            syncPageTitle(main);
-            focusPageHeading(main);
+            if (main) {
+                syncActiveNav();
+                syncPageTitle(main);
+                focusPageHeading(main);
+            }
         }
         armReducedMotionToasts(document);
     });

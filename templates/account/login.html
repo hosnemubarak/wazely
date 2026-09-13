@@ -1,14 +1,3 @@
 {% extends "account/base.html" %}
 {% block title %}Log in · Wazely{% endblock %}
-{% block content %}
-<h1 class="text-3xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">Log in</h1>
-<p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Welcome back. Enter your details to continue.</p>
-<div class="mt-8">
-    {% include "account/_login_form.html" %}
-</div>
-<p class="mt-6 text-sm text-slate-500 dark:text-slate-400">
-    <a href="{% url 'account_signup' %}" class="font-medium text-brand-600 hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-brand-400 dark:hover:text-brand-300">Create an account</a>
-    <span aria-hidden="true">·</span>
-    <a href="{% url 'account_reset_password' %}" class="font-medium text-brand-600 hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-brand-400 dark:hover:text-brand-300">Forgot password?</a>
-</p>
-{% endblock %}
+{% block content %}{% include "account/_login_content.html" %}{% endblock %}

@@ -5,21 +5,34 @@
 {% endif %}
 {% for field in form %}
     <div class="form-field mb-4">
-        <label for="{{ field.id_for_label }}" class="mb-1.5 block text-xs font-medium text-slate-700 dark:text-slate-300">{{ field.label }}</label>
-        {% if field.field.widget.input_type == "password" %}
-            <div class="relative" x-data="wzPassword">
+        {% if field.field.widget.input_type == "checkbox" %}
+            <div class="flex items-center gap-2">
                 {{ field }}
-                <button type="button" class="absolute inset-y-0 right-0 flex w-9 items-center justify-center rounded-r-md text-slate-400 transition-colors hover:text-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-slate-500 dark:hover:text-slate-300" @click="toggle()" :aria-label="visible ? 'Hide password' : 'Show password'">
-                    <span x-show="!visible">{% include "components/_icon.html" with name="eye" %}</span>
-                    <span x-show="visible" x-cloak>{% include "components/_icon.html" with name="eye-off" %}</span>
-                </button>
+                <label for="{{ field.id_for_label }}" class="text-sm text-slate-700 dark:text-slate-300">{{ field.label }}</label>
             </div>
         {% else %}
-            {{ field }}
+            <label for="{{ field.id_for_label }}" class="mb-1.5 block text-xs font-medium text-slate-700 dark:text-slate-300">{{ field.label }}</label>
+            {% if field.field.widget.input_type == "password" %}
+                <div class="relative input-with-toggle" x-data="wzPassword">
+                    {{ field }}
+                    <button type="button" class="absolute inset-y-0 right-0 flex w-9 items-center justify-center rounded-r-md text-slate-400 transition-colors hover:text-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-slate-500 dark:hover:text-slate-300" @click="toggle()" aria-label="Show password" aria-controls="{{ field.id_for_label }}" :aria-label="visible ? 'Hide password' : 'Show password'">
+                        <span x-show="!visible">{% include "components/_icon.html" with name="eye" %}</span>
+                        <span x-show="visible" x-cloak>{% include "components/_icon.html" with name="eye-off" %}</span>
+                    </button>
+                </div>
+            {% else %}
+                {{ field }}
+            {% endif %}
         {% endif %}
-        {% if field.help_text %}<p class="mt-1.5 text-xs text-slate-500 dark:text-slate-400" id="{{ field.id_for_label }}_helptext">{{ field.help_text }}</p>{% endif %}
-        {% for error in field.errors %}
-            <p class="field-error mt-1.5 text-xs font-medium text-red-600 dark:text-red-400" id="{{ field.id_for_label }}_error">{{ error }}</p>
-        {% endfor %}
+        {% if field.help_text %}
+            {# Django's password validators help text is an HTML list — render it in a div, not a p. #}
+            <div class="form-help mt-1.5 text-xs text-slate-500 dark:text-slate-400" id="{{ field.id_for_label }}_helptext">{{ field.help_text }}</div>
+        {% endif %}
+        {% if field.errors %}
+            {# One container keeps the {field_id}_error id unique; Django points aria-describedby at it. #}
+            <ul class="field-error mt-1.5 space-y-0.5 text-xs font-medium text-red-600 dark:text-red-400" id="{{ field.id_for_label }}_error">
+                {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+            </ul>
+        {% endif %}
     </div>
 {% endfor %}

@@ -1,0 +1,8 @@
+<div data-page-title="Account inactive · Wazely">
+    <h1 class="auth-title" tabindex="-1">Account inactive</h1>
+    <p class="auth-subtitle">This account is inactive.</p>
+    <p class="auth-meta">
+        <a href="{% url 'account_login' %}" class="auth-link" hx-get="{% url 'account_login' %}" hx-target="#auth-content" hx-swap="innerHTML show:window:top" hx-push-url="true">Back to log in</a>
+    </p>
+    {% include "partials/_toasts_oob.html" %}
+</div>

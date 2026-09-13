@@ -23,7 +23,9 @@
                         <span class="text-base font-semibold tracking-tight text-slate-900 dark:text-slate-100">Wazely</span>
                     </a>
                 </div>
-                {% block content %}{% endblock %}
+                <div id="auth-content" hx-history-elt>
+                    {% block content %}{% endblock %}
+                </div>
             </div>
         </main>
     </div>

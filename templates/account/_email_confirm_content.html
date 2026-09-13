@@ -1,0 +1,25 @@
+<div data-page-title="Confirm email · Wazely">
+    <h1 class="auth-title" tabindex="-1">Confirm email</h1>
+    {% if can_confirm %}
+        <p class="auth-subtitle">Do you want to confirm {{ email }}?</p>
+        {# Plain POST: allauth re-renders this page on the failure path, which an
+           htmx partial target cannot represent. #}
+        <div id="auth-form" class="mt-8">
+            <form method="post" action="{{ request.path }}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary w-full">Confirm</button>
+            </form>
+        </div>
+    {% elif email %}
+        <p class="auth-subtitle">{{ email }} is already confirmed. You can log in now.</p>
+        <p class="auth-meta">
+            <a href="{% url 'account_login' %}" class="auth-link" hx-get="{% url 'account_login' %}" hx-target="#auth-content" hx-swap="innerHTML show:window:top" hx-push-url="true">Log in</a>
+        </p>
+    {% else %}
+        <p class="auth-subtitle">This confirmation link is invalid or has expired.</p>
+        <p class="auth-meta">
+            <a href="{% url 'account_login' %}" class="auth-link" hx-get="{% url 'account_login' %}" hx-target="#auth-content" hx-swap="innerHTML show:window:top" hx-push-url="true">Back to log in</a>
+        </p>
+    {% endif %}
+    {% include "partials/_toasts_oob.html" %}
+</div>

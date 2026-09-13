@@ -65,13 +65,25 @@
   .form-field textarea {
     @apply h-auto min-h-20;
   }
-  .form-field input[type="password"] {
+  .form-field input[type="checkbox"] {
+    @apply size-4 shrink-0 accent-brand-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600;
+  }
+  /* Password fields carry a reveal toggle; keep the right padding after the
+     input flips to type="text" (keyed on the wrapper, not the input type). */
+  .input-with-toggle input {
     @apply pr-10;
   }
   .form-field input[aria-invalid="true"],
   .form-field select[aria-invalid="true"],
   .form-field textarea[aria-invalid="true"] {
     @apply border-red-300 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500/50;
+  }
+  /* Django's password validators emit a bare <ul> as help text. */
+  .form-help ul {
+    @apply mt-1 list-disc space-y-0.5 pl-4;
+  }
+  .form-help a {
+    @apply font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300;
   }
 
   /* Cards */
@@ -103,6 +115,25 @@
      tabindex="-1" lets app.js move focus to the heading after a swap. */
   .page-title {
     @apply text-2xl font-semibold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600;
+  }
+
+  /* Auth pages (login, signup, password reset) — one shared language.
+     Titles carry tabindex="-1" so app.js can focus them after an in-shell
+     navigation swap. */
+  .auth-title {
+    @apply text-3xl font-semibold tracking-tight text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600 dark:text-slate-100;
+  }
+  .auth-subtitle {
+    @apply mt-2 text-sm text-slate-500 dark:text-slate-400;
+  }
+  .auth-icon-badge {
+    @apply flex size-12 items-center justify-center rounded-full bg-brand-50 text-brand-600 dark:bg-brand-500/10 dark:text-brand-400;
+  }
+  .auth-meta {
+    @apply mt-6 text-sm text-slate-500 dark:text-slate-400;
+  }
+  .auth-link {
+    @apply font-medium text-brand-600 hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-brand-400 dark:hover:text-brand-300;
   }
 
   /* Navigation */

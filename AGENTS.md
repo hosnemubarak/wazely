@@ -74,9 +74,15 @@ in-app links keep their `href` and add `hx-get` + `hx-target="#main-content"`
 + `hx-swap="innerHTML show:window:top"` + `hx-push-url="true"` (no
 `hx-boost`). Login redirects for HTMX requests are converted to
 `204 + HX-Redirect` by `apps.core.middleware.HTMXLoginRedirectMiddleware`.
-No React/Vue/Angular or any client-side SPA framework. Auth pages keep full
-navigation between pages; only their form submissions are HTMX. See the
-`htmx-patterns` skill ("SPA shell pattern") for the full contract.
+No React/Vue/Angular or any client-side SPA framework.
+
+The auth area is a second SPA surface with its own shell
+(`account/base.html`): links swap `#auth-content` and form submissions swap
+`#auth-form` via `HTMXAccountMixin` in `apps/accounts/views.py`. Signup and
+password-reset redirects that stay inside the auth shell are answered with
+`204 + HX-Location` (in-shell swap + history push); login success and logout
+cross shells and use `HX-Redirect` (full page load). See the `htmx-patterns`
+skill ("SPA shell pattern") for the full contract.
 
 ## Working Agreement
 

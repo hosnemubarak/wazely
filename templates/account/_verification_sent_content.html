@@ -1,0 +1,9 @@
+<div data-page-title="Verify your email · Wazely">
+    <span class="auth-icon-badge" aria-hidden="true">{% include "components/_icon.html" with name="mail" size="24" %}</span>
+    <h1 class="auth-title mt-4" tabindex="-1">Verify your email</h1>
+    <p class="auth-subtitle">We have sent you an email with a link to verify your email address. Follow the link to activate your account.</p>
+    <p class="auth-meta">
+        <a href="{% url 'account_login' %}" class="auth-link" hx-get="{% url 'account_login' %}" hx-target="#auth-content" hx-swap="innerHTML show:window:top" hx-push-url="true">Back to log in</a>
+    </p>
+    {% include "partials/_toasts_oob.html" %}
+</div>

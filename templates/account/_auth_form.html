@@ -1,0 +1,16 @@
+{% comment %}
+Shared auth form shell. `action_url` and `submit_text` are required.
+Validation errors re-render this partial and htmx swaps it over #auth-form.
+{% endcomment %}
+<div id="auth-form">
+    <form method="post" action="{{ action_url }}"
+          hx-post="{{ action_url }}"
+          hx-target="#auth-form" hx-swap="outerHTML"
+          hx-indicator="#auth-submit-indicator"
+          hx-disabled-elt="find button[type='submit']">
+        {% csrf_token %}
+        {{ redirect_field }}
+        {% if form %}{% include "partials/_form_fields.html" %}{% endif %}
+        {% include "account/_auth_submit.html" with text=submit_text %}
+    </form>
+</div>

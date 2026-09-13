@@ -41,6 +41,11 @@ and the thin glue between them.
   `shell.html` and includes `<app>/_content.html`. In-app links navigate by
   swapping `#main-content` (`hx-get` + `hx-target` + `hx-swap` +
   `hx-push-url`), never by full-page navigation, and never via `hx-boost`.
+  The auth area is a second SPA surface: `HTMXAccountMixin`
+  (`apps/accounts/views.py`) serves the content partial for `HX-Request` GET
+  and the form partial for POST, swapping `#auth-content`/`#auth-form`;
+  signup and reset redirects that stay in the shell use `HX-Location`, while
+  login success and logout cross shells with `HX-Redirect`.
   No React/Vue/Angular or any client-side SPA framework unless explicitly
   requested.
 

@@ -59,7 +59,7 @@ Brand ramp (emerald): `brand-50 #ecfdf5` → `brand-500 #10b981` →
 
 | Role | Classes |
 |---|---|
-| Auth headline | `text-3xl font-semibold tracking-tight` |
+| Auth headline | `.auth-title` (= `text-3xl font-semibold tracking-tight`, with `focus-visible` outline for post-swap focus) |
 | Page title | `.page-title` (= `text-2xl font-semibold tracking-tight`, with `focus-visible` outline for post-swap focus) |
 | Section | `text-lg font-semibold` |
 | Card title | `text-sm font-semibold` |
@@ -128,11 +128,13 @@ Component primitives live in `templates/components/`. Include signatures:
   (Lucide paths) — no icon package.
 - CSS component classes (defined once in `app.src.css` with `@apply`):
   `.btn` + `.btn-primary|secondary|ghost|danger`, `.input`, `.card`,
-  `.badge-*`, `.page-title`, `.nav-item` (+ `[aria-current="page"]` active
-  state), `.sidebar`, `.sidebar-label`, `.sidebar-tip`, `.sidebar-item`,
-  `.sidebar-center`, `.main-shell`, `.toast`, `.toast-close`, `.toast-icon-*`,
-  `.spinner`, `.tooltip`, `.modal`, `.htmx-progress`. Everything else is
-  utilities in templates.
+  `.badge-*`, `.page-title`, `.auth-title`, `.auth-subtitle`,
+  `.auth-icon-badge`, `.auth-meta`, `.auth-link`, `.form-help`,
+  `.input-with-toggle`, `.nav-item`
+  (+ `[aria-current="page"]` active state), `.sidebar`, `.sidebar-label`,
+  `.sidebar-tip`, `.sidebar-item`, `.sidebar-center`, `.main-shell`, `.toast`,
+  `.toast-close`, `.toast-icon-*`, `.spinner`, `.tooltip`, `.modal`,
+  `.htmx-progress`. Everything else is utilities in templates.
 - Dropdowns: Alpine `x-data="{ open: false }"` + `@click.outside` +
   `@keydown.escape.window`, `:aria-expanded`, `aria-haspopup="true"`, menu is
   `x-cloak x-show="open"` with `origin-top-right` transition classes.
@@ -178,27 +180,44 @@ component changes.
   switcher.
 - `account/base.html` — auth split shell: form column (`max-w-sm`, vertically
   centered) + emerald brand panel (`hidden lg:flex`, gradient, value prop +
-  3 proof points). Single column with compact brand header below `lg`. Auth
-  pages keep full navigation — only form submissions are HTMX.
+  3 proof points). Single column with compact brand header below `lg`. The
+  form column carries `<div id="auth-content" hx-history-elt>`, the auth SPA
+  swap target. Auth pages split the same way as dashboard pages: the page
+  template keeps `{% block title %}` and includes
+  `account/_<page>_content.html` (root `data-page-title`, `auth-title` h1
+  with `tabindex="-1"`, body, `partials/_toasts_oob.html`). Links between auth
+  pages swap `#auth-content` (`hx-get` + `hx-target` + `hx-push-url`); login
+  success leaves for the dashboard with a full page load.
 
 SPA UX states: a delayed global top progress bar (`.htmx-progress`, hidden
 under `prefers-reduced-motion`) runs on every htmx request; failed requests
 append an error toast via `htmx:responseError`; `document.title` syncs from
-`data-page-title` on every swap.
+`data-page-title` on every page-content swap (never on form-error swaps).
 
 ## Forms and toasts
 
 - `partials/_form_fields.html` renders Django forms: labels (`text-xs
   font-medium`), non-field errors (`.form-errors`, `role="alert"`), per-field
-  errors (`.field-error`, id `{field_id}_error` — Django 4.1+ automatically
-  sets `aria-invalid="true"` and `aria-describedby="{field_id}_error"` on the
-  widget, so keep those ids exact), help text (id `{field_id}_helptext` to
-  match Django's automatic `aria-describedby`), and the Alpine password
-  visibility toggle (`x-data="wzPassword"`) for password widgets.
-- Auth form partials keep the HTMX contract: `#auth-form` swap target,
-  `hx-post`/`hx-target`/`hx-swap="outerHTML"`, `hx-indicator="#auth-submit-indicator"`,
-  `hx-disabled-elt="find button[type='submit']"`, spinner inside the submit
-  button.
+  errors in one `.field-error` container with id `{field_id}_error` (one `<li>`
+  per error — keep it a single element: Django's automatic `aria-describedby`
+  and `aria-invalid="true"` point at that id, so duplicates would be invalid
+  and only the first error announced), help text in a `.form-help` div (id
+  `{field_id}_helptext` to match the same `aria-describedby`; keep it a `div`,
+  not a `p`, because Django's password-validator help is a `<ul>` that
+  `.form-help ul` styles), the Alpine password visibility toggle
+  (`x-data="wzPassword"`, wrapped in `.relative.input-with-toggle` so the
+  right padding survives the flip to `type="text"`, `aria-controls` the input,
+  `:aria-label` toggles Show/Hide), and checkboxes rendered inline in their
+  row (`accent-brand-600`, label beside the input) rather than under a block
+  label.
+- `account/_auth_form.html` renders `{{ redirect_field }}` (allauth's hidden
+  `next` input) so `?next=` survives login; keep it when changing the form
+  shell. Every auth form that is HTMX-driven goes through this shell —
+  `_login_form.html`, `_signup_form.html`, `_password_reset_form.html`,
+  `_password_reset_from_key_form.html` and the logout form — passing their own
+  `action_url`/`submit_text`; don't duplicate the shell markup. The email
+  confirmation page is the exception: it keeps a plain form because allauth
+  re-renders the whole document on its failure path.
 - Toasts: Django messages render through `partials/_messages.html`, which
   includes `components/_toast.html` per message, into `#toast-container`
   (bottom-right, `aria-live="polite"`). Content partials instead include
